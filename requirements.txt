@@ -1,1 +1,5 @@
 fastapi
+pyjwt
+passlib[bcrypt]
+sqlalchemy
+psycopg2
