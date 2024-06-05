@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from src.routers import auth_routers
 
 from database import engine
 from models import auth_models
