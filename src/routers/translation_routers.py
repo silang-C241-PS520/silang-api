@@ -18,7 +18,7 @@ router = APIRouter(
 )
 async def get_all_translation():
     # TODO
-    return [TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_created="", feedback="feedback")]
+    return [TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")]
 
 
 @router.get(
@@ -31,7 +31,7 @@ async def get_all_translation():
 )
 async def get_translation_by_id(id: int):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_created="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
 
 
 @router.post(
@@ -45,7 +45,7 @@ async def get_translation_by_id(id: int):
     }
 )
 async def create_translation(file: UploadFile):
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_created="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
 
 
 @router.get(
@@ -58,7 +58,7 @@ async def create_translation(file: UploadFile):
 )
 async def get_feedback_by_id(id: int):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_created="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
 
 
 @router.put(
@@ -71,5 +71,5 @@ async def get_feedback_by_id(id: int):
 )
 async def update_feedback_by_id(id: int, feedback: FeedbackUpdate):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_created="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
 
