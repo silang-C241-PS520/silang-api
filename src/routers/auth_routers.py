@@ -18,7 +18,7 @@ router = APIRouter(
 @router.post("/register",
             response_model=auth_schemas.UserRead,
             responses={
-                200: {"description": "Register successful"},
+                201: {"description": "Register successful"},
                 409: {"description": "Username already exists"},
                 # 422: {"description": "Invalid input"},  # TODO masalahnya fast api punya 422 sendiri
             })
