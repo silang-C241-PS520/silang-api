@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from datetime import timedelta
 
-from crud.auth_crud import get_user_by_username, create_user, save_token, get_token_by_user_id, delete_tokens_by_user_id
-from services.auth_services import authenticate_user, create_access_token, get_current_user
-from schemas import auth_schemas
-from utils import get_db
+from ..crud.auth_crud import get_user_by_username, create_user, save_token, get_token_by_user_id, delete_tokens_by_user_id
+from ..services.auth_services import authenticate_user, create_access_token, get_current_user
+from ..schemas import auth_schemas
+from ..utils import get_db
 
 router = APIRouter(
     prefix="/api/v1/auth",

@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
-from crud.auth_crud import get_user_by_username, get_access_token
-from utils import get_db, pwd_context
+from ..crud.auth_crud import get_user_by_username, get_access_token
+from ..utils import get_db, pwd_context
 
 # To get a string like this run:
 # openssl rand -hex 32

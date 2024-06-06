@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from database import engine
-from models import auth_models
-from routers import auth_routers, translation_routers
+from .database import engine
+from .models import auth_models
+from .routers import auth_routers, translation_routers
 
 tags_metadata = [
     {

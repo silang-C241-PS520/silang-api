@@ -1,4 +1,4 @@
-from database import SessionLocal
+from .database import SessionLocal
 from passlib.context import CryptContext
 
 def get_db():
