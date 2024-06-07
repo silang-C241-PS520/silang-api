@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
-from ..crud.auth_crud import get_user_by_username, get_access_token
+from ..crud.auth_crud import get_user_by_username, get_token_by_access_token
 from ..utils import get_db, pwd_context
 
 # To get a string like this run:
@@ -45,13 +45,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Could not validate credentials.",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        if (not username) or not (get_access_token(db, access_token=token)):
+        if (not username) or not (get_token_by_access_token(db, access_token=token)):
             raise credentials_exception
     except InvalidTokenError:
         raise credentials_exception

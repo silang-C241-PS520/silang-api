@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Change user and password, create silang database for local development
 SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/silang"
