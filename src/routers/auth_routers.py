@@ -51,7 +51,7 @@ async def login_for_access_token(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect username or password.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -71,9 +71,6 @@ async def login_for_access_token(
                 200: {"description": "Logout successful"},
             })
 async def logout(current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)], db: Session = Depends(get_db)):
-    if not get_token_by_user_id(db, current_user.id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="You are already logged out.")
-
     delete_tokens_by_user_id(db, current_user.id)
 
     return {"detail": "Logged out successfully."}

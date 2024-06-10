@@ -12,6 +12,9 @@ def create_user(db: Session, user: auth_schemas.UserCreate):
     db.refresh(db_user)
     return auth_schemas.UserRead(id=db_user.id, username=db_user.username)
 
+def get_all_users(db: Session):
+    return db.query(auth_models.User).all()
+
 def get_user_by_username(db: Session, username: str):
     return db.query(auth_models.User).filter(auth_models.User.username == username).first()
 
@@ -20,10 +23,13 @@ def save_token(db: Session, token: auth_schemas.TokenCreate):
     db.add(token)
     db.commit()
 
+def get_all_tokens(db: Session):
+    return db.query(auth_models.Token).all()
+
 def get_token_by_user_id(db: Session, user_id: int):
     return db.query(auth_models.Token).filter(auth_models.Token.user_id == user_id).first()
 
-def get_access_token(db: Session, access_token: str):
+def get_token_by_access_token(db: Session, access_token: str):
     return db.query(auth_models.Token).filter(auth_models.Token.access_token == access_token).first()
 
 def delete_tokens_by_user_id(db: Session, user_id: int):

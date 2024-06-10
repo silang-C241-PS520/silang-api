@@ -38,3 +38,4 @@ pyjwt
 passlib[bcrypt]
 sqlalchemy
 psycopg2
+pytest
