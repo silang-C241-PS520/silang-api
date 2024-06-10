@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
-import jwt
+import jwt, os
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
@@ -10,10 +10,10 @@ from sqlalchemy.orm import Session
 from ..crud.auth_crud import get_user_by_username, get_token_by_access_token
 from ..utils import get_db, pwd_context
 
-# To get a string like this run:
-# openssl rand -hex 32
-# Will be replaced and moved later
-SECRET_KEY = "9cc0146908eee62be8b3ef43bee962dde35a61ee97d791680d4935ad43bc0eba"
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY env variable is not set.")
+
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
