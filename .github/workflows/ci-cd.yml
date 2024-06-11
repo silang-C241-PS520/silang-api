@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_URL: ${{ secrets.DB_STAGING_URL }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
 
     steps:
