@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from ..database import Base
 
 
-class TranslationResult(Base):
+class Translation(Base):
     __tablename__ = "translation_results"
 
     id = Column(Integer, primary_key=True)
