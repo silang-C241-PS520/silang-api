@@ -3,11 +3,11 @@ from ..database import Base
 
 
 class Translation(Base):
-    __tablename__ = "translation_results"
+    __tablename__ = "translation"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
     video_url = Column(String)
     translation_text = Column(String)
-    translation_date = Column(DateTime)
+    date_time_created = Column(DateTime)
     feedback = Column(Text, nullable=True)

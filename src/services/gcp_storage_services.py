@@ -1,12 +1,7 @@
-import os
 import uuid
-from os.path import dirname, abspath
 
 from fastapi import UploadFile
 from google.cloud import storage
-
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = dirname(
-    dirname(dirname(abspath(__file__)))) + r'\storage-key.json'  # TODO: ini juga jadiin variable plus atur gmn pathnya
 
 
 class GCPStorageServices:
