@@ -1,11 +1,13 @@
+import os
+
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Change user and password, create silang database for local development
-SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/silang"
+DB_URL = os.environ.get("DB_URL")
+if not DB_URL:
+    print("DB_URL env variable is not set.")
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(DB_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
