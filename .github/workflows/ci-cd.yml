@@ -1,6 +1,6 @@
-name: CI/CD
+name: CI
 
-on: [push, pull_request]
+on: push
 
 jobs:
   build-and-test:
@@ -26,33 +26,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-
-  docker-build-and-push:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main'
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: ${{ vars.PROJECT_ID }}
-
-    - name: Authenticate to artifact registry repo
-      run: |
-        gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev
-
-    - name: Docker build
-      run: |
-        docker build -t ${{ vars.REGISTRY_URL }} .
-
-    - name: Docker push to GCP artifact registry
-      run: |
-        docker push ${{ vars.REGISTRY_URL }}
