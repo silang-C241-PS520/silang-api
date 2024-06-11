@@ -40,7 +40,19 @@ jobs:
       with:
         credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEY }}
 
-    - name: Docker build and push to GCP artifact registry
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ vars.PROJECT_ID }}
+
+    - name: Authenticate to artifact registry repo
+      run: |
+        gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev
+
+    - name: Docker build
       run: |
         docker build -t ${{ vars.REGISTRY_URL }} .
+
+    - name: Docker push to GCP artifact registry
+      run: |
         docker push ${{ vars.REGISTRY_URL }}
