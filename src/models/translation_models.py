@@ -6,7 +6,7 @@ class Translation(Base):
     __tablename__ = "translation_results"
 
     id = Column(Integer, primary_key=True)
-    user = Column(Integer, ForeignKey("users.id"), index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
     video_url = Column(String)
     translation_text = Column(String)
     translation_date = Column(DateTime)
