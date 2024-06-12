@@ -15,8 +15,8 @@ from ..schemas.translation_schemas import TranslationCreate, TranslationRead
 
 class TranslationServices:
     def __init__(self, db: Session):
-        self.ml_service = MLServices()
-        self.storage_service = GCPStorageServices()
+        self.ml_service = Annotated[MLServices, Depends(MLServices)]
+        self.storage_service = Annotated[GCPStorageServices, Depends(GCPStorageServices)]
         self.crud = TranslationCRUD(db)
         self.db = db
 
