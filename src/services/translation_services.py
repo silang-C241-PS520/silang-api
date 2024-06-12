@@ -15,8 +15,8 @@ from ..schemas.translation_schemas import TranslationCreate, TranslationRead
 
 class TranslationServices:
     def __init__(self, db: Session):
-        self.ml_service = Annotated[MLServices, Depends(MLServices)]
-        self.storage_service = Annotated[GCPStorageServices, Depends(GCPStorageServices)]
+        self.ml_service: Annotated[MLServices, Depends(MLServices)] = MLServices()
+        self.storage_service: Annotated[GCPStorageServices, Depends(GCPStorageServices)] = GCPStorageServices()
         self.crud = TranslationCRUD(db)
         self.db = db
 
@@ -38,7 +38,6 @@ class TranslationServices:
         )
 
         return self.crud.store_translation(new_translation)
-
 
     def _check_file_valid(self):
         # TODO

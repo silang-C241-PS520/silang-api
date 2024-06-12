@@ -1,13 +1,20 @@
+import os
 import uuid
 
 from fastapi import UploadFile
 from google.cloud import storage
 
 
+BUCKET_NAME = os.environ["BUCKET_NAME"]
+
+
 class GCPStorageServices:
     def __init__(self):
         self.storage_client = storage.Client()
-        self.bucket_name = "silang-c241-ps520-dev"  # TODO: jadiin variable
+        self.bucket_name = BUCKET_NAME
+
+    def __call__(self):
+        return self
 
     def upload_file(self, file: UploadFile) -> str:
         bucket = self.storage_client.bucket(self.bucket_name)
