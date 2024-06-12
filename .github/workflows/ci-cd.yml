@@ -9,6 +9,7 @@ jobs:
     env:
       DB_URL: ${{ secrets.DB_STAGING_URL }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      BUCKET_NAME: ${{ secrets.BUCKET_NAME_TEST }}
 
     steps:
     - uses: actions/checkout@v4
