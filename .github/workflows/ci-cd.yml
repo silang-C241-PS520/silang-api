@@ -21,9 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Google Auth
+      - name: Authenticate to Google Cloud
         id: auth
-        uses: 'google-github-actions/auth@v0'
+        uses: google-github-actions/auth@v2.1.3
         with:
          credentials_json: 'ACTION_GCP_CREDENTIALS'
          token_format: 'access_token'
