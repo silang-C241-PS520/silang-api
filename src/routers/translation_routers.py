@@ -11,7 +11,7 @@ from ..services.translation_services import TranslationServices
 from ..utils import get_db
 
 router = APIRouter(
-    prefix="/api/v1/translation",
+    prefix="/api/v1/translations",
     tags=["Translation"],
 )
 
