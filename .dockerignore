@@ -3,4 +3,5 @@ __pycache__/
 env/
 .git
 .github/
-**/*.md
+**/*.md/tests/test.db
+tests/test.db
