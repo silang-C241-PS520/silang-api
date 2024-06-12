@@ -1,10 +1,17 @@
+from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Response, status, UploadFile, Body
+from fastapi import APIRouter, Response, status, UploadFile, Body, Depends
+from sqlalchemy.orm import Session
+
+from ..schemas import auth_schemas
 from ..schemas.translation_schemas import TranslationRead, FeedbackUpdate
+from ..services.auth_services import get_current_user
+from ..services.translation_services import TranslationServices
+from ..utils import get_db
 
 router = APIRouter(
-    prefix="/api/v1/translation",
+    prefix="/api/v1/translations",
     tags=["Translation"],
 )
 
@@ -16,9 +23,12 @@ router = APIRouter(
         200: {"description": "Get all translation"},
     }
 )
-async def get_all_translation():
+async def get_all_translation(
+        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+):
     # TODO
-    return [TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")]
+    return [TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")]
 
 
 @router.get(
@@ -29,9 +39,12 @@ async def get_all_translation():
         404: {"description": "Translation not found"}
     }
 )
-async def get_translation_by_id(id: int):
+async def get_translation_by_id(
+        id: int, current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")
 
 
 @router.post(
@@ -44,21 +57,27 @@ async def get_translation_by_id(id: int):
         415: {"description": "Unsupported Media Type"}
     }
 )
-async def create_translation(file: UploadFile):
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
+async def create_translation(
+        file: UploadFile,
+        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+):
+    service = TranslationServices(db)
+    return service.create_translation(file, current_user)
 
 
-@router.get(
-    "/{id}/feedbacks",
-    response_model=TranslationRead,
-    responses={
-        200: {"description": "Get feedback by id"},
-        404: {"description": "Translation not found"}
-    }
-)
-async def get_feedback_by_id(id: int):
-    # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
+# udh barengan get translation
+# @router.get(
+#     "/{id}/feedbacks",
+#     response_model=TranslationRead,
+#     responses={
+#         200: {"description": "Get feedback by id"},
+#         404: {"description": "Translation not found"}
+#     }
+# )
+# async def get_feedback_by_id(id: int, current_user: Annotated[str, Depends(oauth2_scheme)] = Depends(get_current_user)):
+#     # TODO
+#     return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_time_created="", feedback="feedback")
 
 
 @router.put(
@@ -69,7 +88,11 @@ async def get_feedback_by_id(id: int):
         404: {"description": "Translation not found"}
     }
 )
-async def update_feedback_by_id(id: int, feedback: FeedbackUpdate):
+async def update_feedback_by_id(
+        id: int, feedback: FeedbackUpdate,
+        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date="", feedback="feedback")
+    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")
 
