@@ -63,7 +63,7 @@ async def create_translation(
         db: Session = Depends(get_db)
 ):
     service = TranslationServices(db)
-    return service.create_translation(file, current_user)
+    return await service.create_translation(file, current_user)
 
 
 # udh barengan get translation
