@@ -40,9 +40,7 @@ class MLServices:
         self.temp_file_path = ""
 
     def do_translation(self, file: UploadFile) -> str:
-        # TODO
         self._save_file_tmp(file)
-        print("temp file: ", self.temp_file_path)
         cap = cv2.VideoCapture(self.temp_file_path)
 
         if not cap.isOpened():
@@ -54,7 +52,6 @@ class MLServices:
         cap.release()
 
         reduced_frames = self._reduce_frames(frames, fps)
-        print("reduced frames: ", len(reduced_frames))
 
         translation_text = self._predict(reduced_frames)
 
@@ -65,7 +62,6 @@ class MLServices:
             temp_file.write(file.file.read())
             self.temp_file_path = temp_file.name
             file.file.seek(0)
-            print("temp file path: ", self.temp_file_path)
 
     def _get_frames(self, cap):
         frames = []
@@ -99,11 +95,9 @@ class MLServices:
             mx = result[i]
             if mx > 0.9:
                 results.append(enc.inverse_transform([i])[0])
-        print("results: ", results)
         return " ".join(results)
 
     def _preprocessing(self, frames):
-        # TODO
         frames = np.array(frames)
         mediapipe_preprocessed_data = []
         for frame in frames:
@@ -134,7 +128,6 @@ class MLServices:
         return mediapipe_preprocessed_data
 
     def _mediapipe_detection(self, image, holistic_model):
-        # TODO
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
         image.flags.writeable = False  # Image is no longer writable
         results = holistic_model.process(image)  # Make prediction
