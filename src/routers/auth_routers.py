@@ -22,7 +22,7 @@ router = APIRouter(
                 409: {"description": "Username already exists"},
                 # 422: {"description": "Invalid input"},  # TODO masalahnya fast api punya 422 sendiri
             })
-async def register_user(user: auth_schemas.UserCreate, response: Response, db: Session = Depends(get_db)):
+def register_user(user: auth_schemas.UserCreate, response: Response, db: Session = Depends(get_db)):
     existing_user = get_user_by_username(db, user.username)
 
     if existing_user:
@@ -43,7 +43,7 @@ async def register_user(user: auth_schemas.UserCreate, response: Response, db: S
                 200: {"description": "Login successful"},
                 401: {"description": "Invalid credentials"},
             })
-async def login_for_access_token(
+def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
 ) -> auth_schemas.Token:
@@ -70,14 +70,14 @@ async def login_for_access_token(
             responses={
                 200: {"description": "Logout successful"},
             })
-async def logout(current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)], db: Session = Depends(get_db)):
+def logout(current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)], db: Session = Depends(get_db)):
     delete_tokens_by_user_id(db, current_user.id)
 
     return {"detail": "Logged out successfully."}
 
 
 @router.get("/me", response_model=auth_schemas.UserRead)
-async def read_current_user(
+def read_current_user(
     current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
 ):
     """

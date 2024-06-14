@@ -20,14 +20,14 @@ class TranslationServices:
         self.crud = TranslationCRUD(db)
         self.db = db
 
-    async def create_translation(self, file: UploadFile, user: UserRead) -> TranslationRead:
+    def create_translation(self, file: UploadFile, user: UserRead) -> TranslationRead:
         self._check_file_valid()
 
         # do translation
-        translation_text, temp_path = await self.ml_service.do_translation(file)
+        translation_text = self.ml_service.do_translation(file)
 
         # store video to google cloud storage
-        video_url = self.storage_service.upload_file(temp_path)
+        video_url = self.storage_service.upload_file(file)
 
         # store translation result to database
         new_translation = TranslationCreate(

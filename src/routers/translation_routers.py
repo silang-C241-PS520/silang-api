@@ -23,7 +23,7 @@ router = APIRouter(
         200: {"description": "Get all translation"},
     }
 )
-async def get_all_translation(
+def get_all_translation(
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
@@ -39,7 +39,7 @@ async def get_all_translation(
         404: {"description": "Translation not found"}
     }
 )
-async def get_translation_by_id(
+def get_translation_by_id(
         id: int, current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
@@ -57,13 +57,13 @@ async def get_translation_by_id(
         415: {"description": "Unsupported Media Type"}
     }
 )
-async def create_translation(
+def create_translation(
         file: UploadFile,
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
     service = TranslationServices(db)
-    return await service.create_translation(file, current_user)
+    return service.create_translation(file, current_user)
 
 
 # udh barengan get translation
@@ -88,7 +88,7 @@ async def create_translation(
         404: {"description": "Translation not found"}
     }
 )
-async def update_feedback_by_id(
+def update_feedback_by_id(
         id: int, feedback: FeedbackUpdate,
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)

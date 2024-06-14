@@ -39,9 +39,9 @@ class MLServices:
         self.holistic = holistic
         self.temp_file_path = ""
 
-    async def do_translation(self, file: UploadFile) -> tuple[str, str]:
+    def do_translation(self, file: UploadFile) -> str:
         # TODO
-        await self._save_file_tmp(file)
+        self._save_file_tmp(file)
         print("temp file: ", self.temp_file_path)
         cap = cv2.VideoCapture(self.temp_file_path)
 
@@ -58,12 +58,13 @@ class MLServices:
 
         translation_text = self._predict(reduced_frames)
 
-        return translation_text, self.temp_file_path
+        return translation_text
 
-    async def _save_file_tmp(self, file: UploadFile):
+    def _save_file_tmp(self, file: UploadFile):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_file:
-            temp_file.write(await file.read())
+            temp_file.write(file.file.read())
             self.temp_file_path = temp_file.name
+            file.file.seek(0)
             print("temp file path: ", self.temp_file_path)
 
     def _get_frames(self, cap):
