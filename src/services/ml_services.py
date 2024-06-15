@@ -1,5 +1,6 @@
 import math
 import tempfile
+import os
 from os.path import dirname, abspath, join
 
 from fastapi import UploadFile
@@ -36,6 +37,7 @@ class MLServices:
 
     def do_translation(self, file: UploadFile) -> str:
         self._save_file_tmp(file)
+
         cap = cv2.VideoCapture(self.temp_file_path)
 
         if not cap.isOpened():
@@ -44,11 +46,14 @@ class MLServices:
         fps = cap.get(cv2.CAP_PROP_FPS)
 
         frames = self._get_frames(cap)
+
         cap.release()
 
         reduced_frames = self._reduce_frames(frames, fps)
 
         translation_text = self._predict(reduced_frames)
+
+        os.remove(self.temp_file_path)
 
         return translation_text
 
