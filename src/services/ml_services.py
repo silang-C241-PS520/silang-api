@@ -1,11 +1,7 @@
 import math
-import os
 import tempfile
 from os.path import dirname, abspath, join
-from pathlib import Path
-from typing import Tuple
 
-import aiofiles as aiofiles
 from fastapi import UploadFile
 import mediapipe as mp
 import cv2
@@ -15,7 +11,6 @@ import numpy as np
 
 model_path = join(dirname(dirname(abspath(__file__))), 'resource', 'test_video8.h5')
 model = tf.keras.models.load_model(model_path, )
-model.summary()
 
 dirs_path = join(dirname(dirname(abspath(__file__))), 'resource', '60_words.txt')
 dirs = open(dirs_path, 'r').read().split('\n')

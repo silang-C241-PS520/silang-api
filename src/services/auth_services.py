@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Annotated
+from typing import Annotated, Union
 
 import jwt, os
 from fastapi import Depends, HTTPException, status
@@ -31,7 +31,7 @@ def authenticate_user(db: Session, username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: Union[timedelta | None] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta

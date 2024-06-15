@@ -1,3 +1,5 @@
+from typing import Union
+
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -8,7 +10,7 @@ class TranslationRead(BaseModel):
     video_url: str
     translation_text: str
     date_time_created: datetime
-    feedback: str | None
+    feedback: Union[str | None]
 
 
 class TranslationCreate(BaseModel):
