@@ -15,7 +15,6 @@ jobs:
       DB_URL: ${{ secrets.DB_STAGING_URL }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       BUCKET_NAME: ${{ secrets.BUCKET_NAME_TEST }}
-#      ACTION_GCP_CREDENTIALS: ${{ secrets.ACTION_GCP_CREDENTIALS }}
 
     steps:
       - name: Checkout

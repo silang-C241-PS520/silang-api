@@ -4,7 +4,6 @@ import uuid
 from fastapi import UploadFile
 from google.cloud import storage
 
-
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 
@@ -21,5 +20,6 @@ class GCPStorageServices:
         randomize_file_name = uuid.uuid4().hex
         file_path = f"videos/{randomize_file_name}"
         blob = bucket.blob(file_path)
-        blob.upload_from_file(file.file, content_type=file.content_type)  # TODO content_types nya apa? mp4? ato ngikutin file yg diupload?
+        blob.upload_from_file(file.file,
+                                  content_type="video/mp4")  # TODO content_types nya apa? mp4? ato ngikutin file yg diupload?
         return f"https://storage.googleapis.com/{self.bucket_name}/{file_path}"
