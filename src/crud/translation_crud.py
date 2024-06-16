@@ -31,5 +31,8 @@ class TranslationCRUD:
     def get_all_translations(self):
         return self.db.query(Translation).all()
 
+    def get_by_id(self, id: int):
+        return self.db.query(Translation).filter(Translation.id == id).first()
+
     def get_sorted_translations_by_user_id(self, user_id: int):
         return self.db.query(Translation).filter(Translation.user_id == user_id).order_by(desc(Translation.id)).all()

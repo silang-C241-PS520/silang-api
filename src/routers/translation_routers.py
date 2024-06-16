@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status, UploadFile, Depends
+from fastapi import APIRouter, UploadFile, Depends
 from sqlalchemy.orm import Session
 
 from ..schemas import auth_schemas
@@ -10,6 +10,7 @@ from ..services.auth_services import get_current_user
 from ..services.translation_services import TranslationServices
 from ..utils import get_db
 from ..crud.translation_crud import TranslationCRUD
+from ..exceptions.translation_exceptions import raise_not_found_exception, raise_forbidden_exception
 
 router = APIRouter(
     prefix="/api/v1/translations",
@@ -32,7 +33,7 @@ def get_all(
     translation_crud = TranslationCRUD(db)
 
     if not translation_crud.get_all_translations():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No translations found.")
+        raise_not_found_exception()
 
     return translation_crud.get_all_translations()
 
@@ -57,9 +58,34 @@ def get_history(
     translation_crud = TranslationCRUD(db)
 
     if not translation_crud.get_sorted_translations_by_user_id(current_user_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No translations found.")
+        raise_not_found_exception()
 
     return translation_crud.get_sorted_translations_by_user_id(current_user_id)
+
+
+@router.get(
+    "/{id}",
+    response_model=TranslationBase,
+    responses={
+        200: {"description": "Succesfully retrieved translation"},
+        403: {"description": "Access to this resource is not allowed."},
+        404: {"description": "No translations found"},
+    }
+)
+def get_by_id(
+        id: int,
+        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+):
+    translation_crud = TranslationCRUD(db)
+
+    if not translation_crud.get_by_id(id):
+        raise_not_found_exception()
+
+    if translation_crud.get_by_id(id).user_id != current_user.id:
+        raise_forbidden_exception()
+
+    return translation_crud.get_by_id(id)
 
 
 @router.post(
@@ -110,4 +136,3 @@ def update_feedback_by_id(
 ):
     # TODO
     return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")
-
