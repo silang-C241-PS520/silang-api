@@ -93,6 +93,27 @@ def test_get_all_translations_not_found(client_authenticated):
     assert response.json()["detail"] == "No translations found."
 
 
+def test_get_translation_by_id(client_authenticated, add_translations_to_db):
+    response = client_authenticated.get("api/v1/translations/1")
+
+    assert response.status_code == 200
+    assert response.json()["id"] == 1
+
+
+def test_get_translation_by_id_forbidden(client_authenticated, add_translations_to_db):
+    response = client_authenticated.get("api/v1/translations/3")
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Access to this resource is not allowed."
+
+
+def test_get_translation_by_id_not_found(client_authenticated):
+    response = client_authenticated.get("api/v1/translations/3")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "No translations found."
+
+
 def test_get_translation_history(client_authenticated, add_translations_to_db):
     response = client_authenticated.get("api/v1/translations/history")
 
@@ -100,7 +121,7 @@ def test_get_translation_history(client_authenticated, add_translations_to_db):
     assert len(response.json()) == 2
 
 
-def test_get_all_translation_history_not_found(client_authenticated):
+def test_get_translation_history_not_found(client_authenticated):
     response = client_authenticated.get("api/v1/translations/history")
 
     assert response.status_code == 404
