@@ -5,20 +5,12 @@ from src.main import app
 from src.database import Base
 from src.utils import get_db
 from src.crud import auth_crud
-from .database import engine, TestingSessionLocal, override_get_db
+from .database import engine, override_get_db, test_db
 
 @pytest.fixture()
 def refresh_db():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-
-@pytest.fixture()
-def test_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
 
 app.dependency_overrides[get_db] = override_get_db
 
@@ -69,7 +61,7 @@ def test_register_username_exist():
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == "Username already registered."
+    assert response.json()["detail"] == "Username already exists."
 
 
 def test_register_insufficient_password_length():
