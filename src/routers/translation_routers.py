@@ -19,26 +19,6 @@ router = APIRouter(
 
 
 @router.get(
-    "/all",
-    response_model=list[TranslationRead],
-    responses={
-        200: {"description": "Succesfully retrieved all translations"},
-        404: {"description": "No translations found"},
-    }
-)
-def get_all(
-        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
-        db: Session = Depends(get_db)
-):
-    translation_crud = TranslationCRUD(db)
-
-    if not translation_crud.get_all_translations():
-        raise_not_found_exception()
-
-    return translation_crud.get_all_translations()
-
-
-@router.get(
     "/history",
     response_model=list[TranslationBase],
     responses={

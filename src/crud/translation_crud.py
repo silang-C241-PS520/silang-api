@@ -28,9 +28,6 @@ class TranslationCRUD:
             feedback=db_translation.feedback
         )
 
-    def get_all_translations(self):
-        return self.db.query(Translation).all()
-
     def get_by_id(self, id: int):
         return self.db.query(Translation).filter(Translation.id == id).first()
 

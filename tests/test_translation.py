@@ -79,20 +79,6 @@ def test_create_translation_unauthorized(client_not_authenticated):
     assert response.status_code == 401
 
 
-def test_get_all_translations(client_authenticated, add_translations_to_db):
-    response = client_authenticated.get("api/v1/translations/all")
-
-    assert response.status_code == 200
-    assert len(response.json()) == 3
-
-
-def test_get_all_translations_not_found(client_authenticated):
-    response = client_authenticated.get("api/v1/translations/all")
-
-    assert response.status_code == 404
-    assert response.json()["detail"] == "No translations found."
-
-
 def test_get_translation_by_id(client_authenticated, add_translations_to_db):
     response = client_authenticated.get("api/v1/translations/1")
 
