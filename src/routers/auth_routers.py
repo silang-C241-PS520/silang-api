@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from datetime import timedelta
 
-from ..crud.auth_crud import get_user_by_username, create_user, save_token, get_token_by_user_id, delete_tokens_by_user_id
+from ..crud.auth_crud import get_user_by_username, create_user, save_token, delete_tokens_by_user_id
 from ..services.auth_services import authenticate_user, create_access_token, get_current_user
 from ..schemas import auth_schemas
 from ..utils import get_db
@@ -20,13 +20,13 @@ router = APIRouter(
             responses={
                 201: {"description": "Register successful"},
                 409: {"description": "Username already exists"},
-                # 422: {"description": "Invalid input"},  # TODO masalahnya fast api punya 422 sendiri
+                422: {"description": "Invalid request body"},
             })
 def register_user(user: auth_schemas.UserCreate, response: Response, db: Session = Depends(get_db)):
     existing_user = get_user_by_username(db, user.username)
 
     if existing_user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already registered.")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists.")
 
     if len(user.password) < 8 :
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Password must be at least 8 characters.")
