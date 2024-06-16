@@ -1,14 +1,15 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Response, status, UploadFile, Body, Depends
+from fastapi import APIRouter, HTTPException, status, UploadFile, Depends
 from sqlalchemy.orm import Session
 
 from ..schemas import auth_schemas
-from ..schemas.translation_schemas import TranslationRead, FeedbackUpdate
+from ..schemas.translation_schemas import TranslationBase, TranslationRead, FeedbackUpdate
 from ..services.auth_services import get_current_user
 from ..services.translation_services import TranslationServices
 from ..utils import get_db
+from ..crud.translation_crud import TranslationCRUD
 
 router = APIRouter(
     prefix="/api/v1/translations",
@@ -17,34 +18,48 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "/all",
     response_model=list[TranslationRead],
     responses={
-        200: {"description": "Get all translation"},
+        200: {"description": "Succesfully retrieved all translations"},
+        404: {"description": "No translations found"},
     }
 )
-def get_all_translation(
+def get_all(
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
-    # TODO
-    return [TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")]
+    translation_crud = TranslationCRUD(db)
+
+    if not translation_crud.get_all_translations():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No translations found.")
+
+    return translation_crud.get_all_translations()
 
 
 @router.get(
-    "/{id}",
-    response_model=TranslationRead,
+    "/history",
+    response_model=list[TranslationBase],
     responses={
-        200: {"description": "Get translation by id"},
-        404: {"description": "Translation not found"}
+        200: {"description": "Succesfully retrieved translation history"},
+        404: {"description": "No translations found"}
     }
 )
-def get_translation_by_id(
-        id: int, current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
+def get_history(
+        current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
-    # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")
+    """
+    Returns the current user's translations ordered by the most recent.
+    """
+    current_user_id = current_user.id
+
+    translation_crud = TranslationCRUD(db)
+
+    if not translation_crud.get_sorted_translations_by_user_id(current_user_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No translations found.")
+
+    return translation_crud.get_sorted_translations_by_user_id(current_user_id)
 
 
 @router.post(

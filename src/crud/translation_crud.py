@@ -1,12 +1,11 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from src.models.translation_models import Translation
-from src.schemas.auth_schemas import UserRead
 from src.schemas.translation_schemas import TranslationCreate, TranslationRead
 
 
 class TranslationCRUD:
-
     def __init__(self, db: Session):
         self.db = db
 
@@ -29,3 +28,8 @@ class TranslationCRUD:
             feedback=db_translation.feedback
         )
 
+    def get_all_translations(self):
+        return self.db.query(Translation).all()
+
+    def get_sorted_translations_by_user_id(self, user_id: int):
+        return self.db.query(Translation).filter(Translation.user_id == user_id).order_by(desc(Translation.id)).all()
