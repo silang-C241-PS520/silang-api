@@ -19,14 +19,14 @@ router = APIRouter(
 
 
 @router.get(
-    "/history",
+    "/me",
     response_model=list[TranslationBase],
     responses={
         200: {"description": "Succesfully retrieved translation history"},
         404: {"description": "No translations found"}
     }
 )
-def get_history(
+def get_current_user_translations(
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
@@ -52,7 +52,7 @@ def get_history(
         404: {"description": "No translations found"},
     }
 )
-def get_by_id(
+def get_translation_by_id(
         id: int,
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)

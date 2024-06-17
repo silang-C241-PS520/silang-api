@@ -100,15 +100,15 @@ def test_get_translation_by_id_not_found(client_authenticated):
     assert response.json()["detail"] == "No translations found."
 
 
-def test_get_translation_history(client_authenticated, add_translations_to_db):
-    response = client_authenticated.get("api/v1/translations/history")
+def test_get_current_user_translations(client_authenticated, add_translations_to_db):
+    response = client_authenticated.get("api/v1/translations/me")
 
     assert response.status_code == 200
     assert len(response.json()) == 2
 
 
-def test_get_translation_history_not_found(client_authenticated):
-    response = client_authenticated.get("api/v1/translations/history")
+def test_get_current_user_translations_not_found(client_authenticated):
+    response = client_authenticated.get("api/v1/translations/me")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "No translations found."
