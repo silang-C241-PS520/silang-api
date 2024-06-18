@@ -21,5 +21,5 @@ class GCPStorageServices:
         file_path = f"videos/{randomize_file_name}"
         blob = bucket.blob(file_path)
         blob.upload_from_file(file.file,
-                                  content_type="video/mp4")  # TODO content_types nya apa? mp4? ato ngikutin file yg diupload?
+                              content_type=file.content_type)
         return f"https://storage.googleapis.com/{self.bucket_name}/{file_path}"

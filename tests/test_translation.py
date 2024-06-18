@@ -97,7 +97,7 @@ def test_get_translation_by_id_not_found(client_authenticated):
     response = client_authenticated.get("api/v1/translations/3")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == "No translations found."
+    assert response.json()["detail"] == "Translation not found."
 
 
 def test_get_current_user_translations(client_authenticated, add_translations_to_db):
@@ -111,4 +111,58 @@ def test_get_current_user_translations_not_found(client_authenticated):
     response = client_authenticated.get("api/v1/translations/me")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == "No translations found."
+    assert response.json()["detail"] == "Translation not found."
+
+
+def test_get_current_user_translations_unauthorized(client_not_authenticated):
+    response = client_not_authenticated.get("api/v1/translations/me")
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Not authenticated"
+
+
+def test_update_feedback_by_id_success(client_authenticated, add_translations_to_db, freezer):
+    feedback_input = "feedback"
+    response = client_authenticated.put(
+        "api/v1/translations/1/feedbacks",
+        json={"feedback": feedback_input}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == 1
+    assert response.json()["video_url"] == "url"
+    assert response.json()["translation_text"] == "translation"
+    assert response.json()["feedback"] == feedback_input
+
+
+def test_update_feedback_by_id_not_authenticated(client_not_authenticated, add_translations_to_db):
+    feedback_input = "feedback"
+    response = client_not_authenticated.put(
+        "api/v1/translations/1/feedbacks",
+        json={"feedback": feedback_input}
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Not authenticated"
+
+
+def test_update_feedback_by_id_translation_not_found(client_authenticated):
+    feedback_input = "feedback"
+    response = client_authenticated.put(
+        "api/v1/translations/0/feedbacks",
+        json={"feedback": feedback_input}
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Translation not found."
+
+
+def test_update_feedback_by_id_not_allowed(client_authenticated, add_translations_to_db):
+    feedback_input = "feedback"
+    response = client_authenticated.put(
+        "api/v1/translations/3/feedbacks",
+        json={"feedback": feedback_input}
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Access to this resource is not allowed."

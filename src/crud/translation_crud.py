@@ -28,8 +28,13 @@ class TranslationCRUD:
             feedback=db_translation.feedback
         )
 
-    def get_by_id(self, id: int):
-        return self.db.query(Translation).filter(Translation.id == id).first()
+    def get_by_id(self, translation_id: int):
+        return self.db.query(Translation).filter(Translation.id == translation_id).first()
 
     def get_sorted_translations_by_user_id(self, user_id: int):
         return self.db.query(Translation).filter(Translation.user_id == user_id).order_by(desc(Translation.id)).all()
+
+    def update_translation(self, translation: Translation):
+        self.db.commit()
+        self.db.refresh(translation)
+        return translation
