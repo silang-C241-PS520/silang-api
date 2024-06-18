@@ -33,3 +33,8 @@ class TranslationCRUD:
 
     def get_sorted_translations_by_user_id(self, user_id: int):
         return self.db.query(Translation).filter(Translation.user_id == user_id).order_by(desc(Translation.id)).all()
+
+    def update_translation(self, translation: Translation):
+        self.db.commit()
+        self.db.refresh(translation)
+        return translation

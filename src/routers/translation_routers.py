@@ -10,7 +10,7 @@ from ..services.auth_services import get_current_user
 from ..services.translation_services import TranslationServices
 from ..utils import get_db
 from ..crud.translation_crud import TranslationCRUD
-from ..exceptions.translation_exceptions import raise_not_found_exception, raise_forbidden_exception
+from ..exceptions.translation_exceptions import raise_translation_not_found_exception, raise_forbidden_exception
 
 router = APIRouter(
     prefix="/api/v1/translations",
@@ -38,7 +38,7 @@ def get_current_user_translations(
     translation_crud = TranslationCRUD(db)
 
     if not translation_crud.get_sorted_translations_by_user_id(current_user_id):
-        raise_not_found_exception()
+        raise_translation_not_found_exception()
 
     return translation_crud.get_sorted_translations_by_user_id(current_user_id)
 
@@ -60,7 +60,7 @@ def get_translation_by_id(
     translation_crud = TranslationCRUD(db)
 
     if not translation_crud.get_by_id(id):
-        raise_not_found_exception()
+        raise_translation_not_found_exception()
 
     if translation_crud.get_by_id(id).user_id != current_user.id:
         raise_forbidden_exception()
@@ -110,9 +110,11 @@ def create_translation(
     }
 )
 def update_feedback_by_id(
-        id: int, feedback: FeedbackUpdate,
+        id: int,
+        feedback: FeedbackUpdate,
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
     # TODO
-    return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", translation_date=datetime.now(), feedback="feedback")
+    service = TranslationServices(db)
+    return service.update_feedback_by_id(id, feedback, current_user)

@@ -112,3 +112,25 @@ def test_get_current_user_translations_not_found(client_authenticated):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "No translations found."
+
+
+def test_get_current_user_translations_unauthorized(client_not_authenticated):
+    response = client_not_authenticated.get("api/v1/translations/me")
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Not authenticated"
+
+
+def test_update_feedback_by_id_success(client_authenticated, add_translations_to_db, freezer):
+    feedback_input = "feedback"
+    response = client_authenticated.put(
+        "api/v1/translations/1/feedbacks",
+        json={"feedback": feedback_input}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == 1
+    assert response.json()["video_url"] == "url"
+    assert response.json()["translation_text"] == "translation"
+    assert response.json()["feedback"] == feedback_input
+

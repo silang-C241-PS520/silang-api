@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 from .gcp_storage_services import GCPStorageServices
 from ..crud.translation_crud import TranslationCRUD
-from ..schemas import translation_schemas
+from ..exceptions.translation_exceptions import raise_translation_not_found_exception, raise_forbidden_exception
+from ..schemas.translation_schemas import FeedbackUpdate
 from ..models import translation_models
 from .ml_services import MLServices
 from ..schemas.auth_schemas import UserRead
@@ -16,10 +17,9 @@ from ..schemas.translation_schemas import TranslationCreate, TranslationRead
 
 class TranslationServices:
     def __init__(self, db: Session):
-        self.ml_service: Annotated[MLServices, Depends(MLServices)] = MLServices()
-        self.storage_service: Annotated[GCPStorageServices, Depends(GCPStorageServices)] = GCPStorageServices()
+        self.ml_service = MLServices()
+        self.storage_service = GCPStorageServices()
         self.crud = TranslationCRUD(db)
-        self.db = db
 
     def create_translation(self, file: UploadFile, user: UserRead) -> TranslationRead:
         self._check_file_valid()
@@ -38,6 +38,19 @@ class TranslationServices:
             date_time_created=datetime.now()
         )
         return self.crud.store_translation(new_translation)
+
+    def update_feedback_by_id(self, id: int, feedback: FeedbackUpdate, user: UserRead) -> TranslationRead:
+        translation = self.crud.get_by_id(id)
+
+        if not translation:
+            raise_translation_not_found_exception()
+
+        if translation.user_id != user.id:
+            raise_forbidden_exception()
+
+        translation.feedback = feedback.feedback
+        self.crud.update_translation(translation)
+        return translation
 
     def _check_file_valid(self):
         # TODO
