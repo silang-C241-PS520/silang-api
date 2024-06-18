@@ -41,7 +41,7 @@ def get_auth_header(test_db):
     return {"Authorization": f"Bearer {access_token}"}
 
 
-def test_register_success(refresh_db, test_db):
+def test_register_success(refresh_db):
     response = client.post(
         "/register",
         json=first_registrar_data

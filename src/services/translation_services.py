@@ -20,7 +20,7 @@ class TranslationServices:
         self.crud = TranslationCRUD(db)
 
     def create_translation(self, file: UploadFile, user: UserRead) -> TranslationRead:
-        self._check_file_valid()
+        self._check_file_is_valid()
 
         # do translation
         translation_text = self.ml_service.do_translation(file)
@@ -50,6 +50,6 @@ class TranslationServices:
         self.crud.update_translation(translation)
         return translation
 
-    def _check_file_valid(self):
+    def _check_file_is_valid(self):
         # TODO
         pass
