@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_URL: ${{ secrets.DB_STAGING_URL }}
+      DB_URL: ${{ secrets.DB_TEST_URL }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       BUCKET_NAME: ${{ secrets.BUCKET_NAME_TEST }}
 
