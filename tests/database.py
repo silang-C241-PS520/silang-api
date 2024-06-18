@@ -10,12 +10,14 @@ engine = create_engine(
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def override_get_db():
     try:
         db = TestingSessionLocal()
         yield db
     finally:
         db.close()
+
 
 @pytest.fixture()
 def test_db():

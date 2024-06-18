@@ -1,15 +1,13 @@
 import os
 from datetime import datetime
-from typing import Annotated
 
-from fastapi import UploadFile, Depends
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from .gcp_storage_services import GCPStorageServices
 from ..crud.translation_crud import TranslationCRUD
 from ..exceptions.translation_exceptions import raise_translation_not_found_exception, raise_forbidden_exception
 from ..schemas.translation_schemas import FeedbackUpdate
-from ..models import translation_models
 from .ml_services import MLServices
 from ..schemas.auth_schemas import UserRead
 from ..schemas.translation_schemas import TranslationCreate, TranslationRead
