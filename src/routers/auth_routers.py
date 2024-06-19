@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status, Response, APIRouter
+from fastapi import Depends, HTTPException, status, APIRouter, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Annotated
@@ -16,13 +16,53 @@ router = APIRouter(
 
 
 @router.post("/register",
-             response_model=auth_schemas.UserRead,
-             responses={
-                 201: {"description": "Register successful"},
-                 409: {"description": "Username already exists"},
-                 422: {"description": "Invalid request body"},
-             })
-def register_user(user: auth_schemas.UserCreate, response: Response, db: Session = Depends(get_db)):
+            response_model=auth_schemas.UserRead,
+            status_code=status.HTTP_201_CREATED,
+            responses={
+                201: {
+                    "description": "Register successful",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "id": 1,
+                                "username": "johndoe",
+                            }
+                        }
+                    }
+                },
+                409: {
+                    "description": "Username already exists",
+                    "content": {
+                        "application/json": {
+                            "example": "Username already exists."
+                        }
+                    }
+                },
+                422: {
+                    "description": "Invalid request body",
+                      "content": {
+                        "application/json": {
+                            "examples": {
+                                "Short password": {"value": "Password must be at least 8 characters."},
+                                "Password confirmation mismatch": {"value": "Password confirmation does not match."},
+                            }
+                        }
+                    }
+                },
+            })
+def register_user(
+    user: Annotated[
+        auth_schemas.UserCreate,
+        Body(
+            example={
+                "username": "johndoe",
+                "password": "secretpassword",
+                "confirm_password": "secretpassword"
+            }
+        )],
+    db: Session = Depends(get_db)
+):
+    """Username must be unique with minimal password length of 8 characters."""
     existing_user = get_user_by_username(db, user.username)
 
     if existing_user:
@@ -36,15 +76,31 @@ def register_user(user: auth_schemas.UserCreate, response: Response, db: Session
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="Password confirmation does not match.")
 
-    response.status_code = status.HTTP_201_CREATED
     return create_user(db, user)
 
 
 @router.post("/login",
-             responses={
-                 200: {"description": "Login successful"},
-                 401: {"description": "Invalid credentials"},
-             })
+            responses={
+                200: {
+                    "description": "Login successful",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "access_token": "token",
+                                "token_type": "bearer",
+                            }
+                        }
+                    }
+                },
+                401: {
+                    "description": "Invalid credentials",
+                    "content": {
+                        "application/json": {
+                            "example": "Incorrect username or password."
+                        }
+                    }
+                },
+            })
 def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         db: Session = Depends(get_db),
@@ -69,9 +125,16 @@ def login_for_access_token(
 
 
 @router.post("/logout",
-             responses={
-                 200: {"description": "Logout successful"},
-             })
+            responses={
+                200: {
+                    "description": "Logout successful",
+                    "content": {
+                        "application/json": {
+                            "example": "Logged out successfully."
+                        }
+                    }
+                },
+            })
 def logout(current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)], db: Session = Depends(get_db)):
     delete_tokens_by_user_id(db, current_user.id)
 

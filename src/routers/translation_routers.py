@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, UploadFile, Depends
@@ -22,8 +21,28 @@ router = APIRouter(
     "/me",
     response_model=list[TranslationBase],
     responses={
-        200: {"description": "Succesfully retrieved translation history"},
-        404: {"description": "No translations found"}
+        200: {
+            "description": "Succesfully retrieved translation history",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "video_url": "https://storage.googleapis.com/translation_url_example",
+                        "translation_text": "Saya",
+                        "date_time_created": "2024-06-19T06:37:58.752Z",
+                        "feedback": "Translation feedback"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Translation not found",
+            "content": {
+                "application/json": {
+                    "example": "Translation not found."
+                }
+            }
+        }
     }
 )
 def get_current_user_translations(
@@ -47,9 +66,36 @@ def get_current_user_translations(
     "/{id}",
     response_model=TranslationBase,
     responses={
-        200: {"description": "Succesfully retrieved translation"},
-        403: {"description": "Access to this resource is not allowed."},
-        404: {"description": "No translations found"},
+        200: {
+            "description": "Succesfully retrieved translation",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "video_url": "https://storage.googleapis.com/translation_url_example",
+                        "translation_text": "Saya",
+                        "date_time_created": "2024-06-19T06:37:58.752Z",
+                        "feedback": "Translation feedback"
+                    }
+                }
+            }
+        },
+        403: {
+            "description": "Access to this resource is not allowed.",
+            "content": {
+                "application/json": {
+                    "example": "Access to this resource is not allowed."
+                }
+            }
+        },
+        404: {
+            "description": "Translation not found",
+            "content": {
+                "application/json": {
+                    "example": "Translation not found."
+                }
+            }
+        },
     }
 )
 def get_translation_by_id(
@@ -73,9 +119,37 @@ def get_translation_by_id(
     status_code=201,
     response_model=TranslationRead,
     responses={
-        201: {"description": "Translation created"},
-        413: {"description": "Request Entity Too Large"},
-        415: {"description": "Unsupported Media Type"}
+        201: {
+            "description": "Translation created",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "video_url": "https://storage.googleapis.com/translation_url_example",
+                        "translation_text": "Saya",
+                        "date_time_created": "2024-06-19T06:37:58.752Z",
+                        "feedback": None,
+                        "user_id": 1
+                    }
+                }
+            }
+        },
+        413: {
+            "description": "Request entity too large",
+            "content": {
+                "application/json": {
+                    "example": "Request entity too large."
+                }
+            }
+        },
+        415: {
+            "description": "Unsupported media type",
+            "content": {
+                "application/json": {
+                    "example": "Unsupported media type."
+                }
+            }
+        }
     }
 )
 def create_translation(
@@ -105,8 +179,29 @@ def create_translation(
     "/{id}/feedbacks",
     response_model=TranslationRead,
     responses={
-        200: {"description": "Feedback updated"},
-        404: {"description": "Translation not found"}
+        200: {
+            "description": "Feedback updated",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "video_url": "https://storage.googleapis.com/translation_url_example",
+                        "translation_text": "Saya",
+                        "date_time_created": "2024-06-19T06:37:58.752Z",
+                        "feedback": "Updated feedback",
+                        "user_id": 1
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Translation not found",
+            "content": {
+                "application/json": {
+                    "example": "Translation not found."
+                }
+            }
+        }
     }
 )
 def update_feedback_by_id(
@@ -115,6 +210,5 @@ def update_feedback_by_id(
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
         db: Session = Depends(get_db)
 ):
-    # TODO
     service = TranslationServices(db)
     return service.update_feedback_by_id(id, feedback, current_user)
