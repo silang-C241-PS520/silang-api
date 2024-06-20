@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, UploadFile, Depends
 from sqlalchemy.orm import Session
 
+from ..documentations.base_documentations import not_authenticated_doc
 from ..schemas import auth_schemas
 from ..schemas.translation_schemas import TranslationBase, TranslationRead, FeedbackUpdate
 from ..services.auth_services import get_current_user
@@ -25,24 +26,17 @@ router = APIRouter(
             "description": "Succesfully retrieved translation history",
             "content": {
                 "application/json": {
-                    "example": {
+                    "example": [{
                         "id": 1,
                         "video_url": "https://storage.googleapis.com/translation_url_example",
                         "translation_text": "Saya",
                         "date_time_created": "2024-06-19T06:37:58.752Z",
                         "feedback": "Translation feedback"
-                    }
+                    }]
                 }
             }
         },
-        404: {
-            "description": "Translation not found",
-            "content": {
-                "application/json": {
-                    "example": "Translation not found."
-                }
-            }
-        }
+        401: not_authenticated_doc,
     }
 )
 def get_current_user_translations(
@@ -80,11 +74,13 @@ def get_current_user_translations(
                 }
             }
         },
+        401: not_authenticated_doc,
         403: {
             "description": "Access to this resource is not allowed.",
             "content": {
                 "application/json": {
-                    "example": "Access to this resource is not allowed."
+                    "example": {
+                        "detail": "Access to this resource is not allowed."}
                 }
             }
         },
@@ -92,7 +88,9 @@ def get_current_user_translations(
             "description": "Translation not found",
             "content": {
                 "application/json": {
-                    "example": "Translation not found."
+                    "example": {
+                        "detail": "Translation not found."
+                    }
                 }
             }
         },
@@ -134,11 +132,14 @@ def get_translation_by_id(
                 }
             }
         },
+        401: not_authenticated_doc,
         413: {
             "description": "Request entity too large",
             "content": {
                 "application/json": {
-                    "example": "Request entity too large."
+                    "example": {
+                        "detail": "Request entity too large."
+                    }
                 }
             }
         },
@@ -146,7 +147,9 @@ def get_translation_by_id(
             "description": "Unsupported media type",
             "content": {
                 "application/json": {
-                    "example": "Unsupported media type."
+                    "example": {
+                        "detail": "Unsupported media type."
+                    }
                 }
             }
         }
@@ -159,20 +162,6 @@ def create_translation(
 ):
     service = TranslationServices(db)
     return service.create_translation(file, current_user)
-
-
-# udh barengan get translation
-# @router.get(
-#     "/{id}/feedbacks",
-#     response_model=TranslationRead,
-#     responses={
-#         200: {"description": "Get feedback by id"},
-#         404: {"description": "Translation not found"}
-#     }
-# )
-# async def get_feedback_by_id(id: int, current_user: Annotated[str, Depends(oauth2_scheme)] = Depends(get_current_user)):
-#     # TODO
-#     return TranslationRead(id=1, video_url="video_url", translation_text="translation_text", date_time_created="", feedback="feedback")
 
 
 @router.put(
@@ -194,11 +183,14 @@ def create_translation(
                 }
             }
         },
+        401: not_authenticated_doc,
         404: {
             "description": "Translation not found",
             "content": {
                 "application/json": {
-                    "example": "Translation not found."
+                    "example": {
+                        "detail": "Translation not found."
+                    }
                 }
             }
         }

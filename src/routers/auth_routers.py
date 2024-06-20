@@ -5,6 +5,7 @@ from typing import Annotated
 from datetime import timedelta
 
 from ..crud.auth_crud import get_user_by_username, create_user, save_token, delete_tokens_by_user_id
+from ..documentations.base_documentations import not_authenticated_doc
 from ..services.auth_services import authenticate_user, create_access_token, get_current_user
 from ..schemas import auth_schemas
 from ..utils import get_db
@@ -16,51 +17,60 @@ router = APIRouter(
 
 
 @router.post("/register",
-            response_model=auth_schemas.UserRead,
-            status_code=status.HTTP_201_CREATED,
-            responses={
-                201: {
-                    "description": "Register successful",
-                    "content": {
-                        "application/json": {
-                            "example": {
-                                "id": 1,
-                                "username": "johndoe",
-                            }
-                        }
-                    }
-                },
-                409: {
-                    "description": "Username already exists",
-                    "content": {
-                        "application/json": {
-                            "example": "Username already exists."
-                        }
-                    }
-                },
-                422: {
-                    "description": "Invalid request body",
-                      "content": {
-                        "application/json": {
-                            "examples": {
-                                "Short password": {"value": "Password must be at least 8 characters."},
-                                "Password confirmation mismatch": {"value": "Password confirmation does not match."},
-                            }
-                        }
-                    }
-                },
-            })
+             response_model=auth_schemas.UserRead,
+             status_code=status.HTTP_201_CREATED,
+             responses={
+                 201: {
+                     "description": "Register successful",
+                     "content": {
+                         "application/json": {
+                             "example": {
+                                 "id": 1,
+                                 "username": "johndoe",
+                             }
+                         }
+                     }
+                 },
+                 409: {
+                     "description": "Username already exists.",
+                     "content": {
+                         "application/json": {
+                             "example": {
+                                 "detail": "Username already exists."}
+                         }
+                     }
+                 },
+                 422: {
+                     "description": "Invalid request body",
+                     "content": {
+                         "application/json": {
+                             "examples": {
+                                 "Short password": {
+                                     "value": {
+                                         "detail": "Password must be at least 8 characters."
+                                     }
+                                 },
+                                 "Password confirmation mismatch": {
+                                     "value": {
+                                         "detail": "Password confirmation does not match."
+                                     }
+                                 },
+                             }
+                         }
+                     }
+                 },
+             })
 def register_user(
-    user: Annotated[
-        auth_schemas.UserCreate,
-        Body(
-            example={
-                "username": "johndoe",
-                "password": "secretpassword",
-                "confirm_password": "secretpassword"
-            }
-        )],
-    db: Session = Depends(get_db)
+        user: Annotated[
+            auth_schemas.UserCreate,
+            Body(
+                example={
+                    "username": "johndoe",
+                    "password": "secretpassword",
+                    "confirm_password": "secretpassword"
+                }
+            )],
+        db: Session = Depends(get_db)
 ):
     """Username must be unique with minimal password length of 8 characters."""
     existing_user = get_user_by_username(db, user.username)
@@ -80,27 +90,29 @@ def register_user(
 
 
 @router.post("/login",
-            responses={
-                200: {
-                    "description": "Login successful",
-                    "content": {
-                        "application/json": {
-                            "example": {
-                                "access_token": "token",
-                                "token_type": "bearer",
-                            }
-                        }
-                    }
-                },
-                401: {
-                    "description": "Invalid credentials",
-                    "content": {
-                        "application/json": {
-                            "example": "Incorrect username or password."
-                        }
-                    }
-                },
-            })
+             responses={
+                 200: {
+                     "description": "Login successful",
+                     "content": {
+                         "application/json": {
+                             "example": {
+                                 "access_token": "token",
+                                 "token_type": "bearer",
+                             }
+                         }
+                     }
+                 },
+                 401: {
+                     "description": "Invalid credentials",
+                     "content": {
+                         "application/json": {
+                             "example": {
+                                 "detail": "Incorrect username or password."
+                             }
+                         }
+                     }
+                 },
+             })
 def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         db: Session = Depends(get_db),
@@ -125,23 +137,41 @@ def login_for_access_token(
 
 
 @router.post("/logout",
-            responses={
-                200: {
-                    "description": "Logout successful",
+             responses={
+                 200: {
+                    "description": "Logged out successfully.",
                     "content": {
                         "application/json": {
-                            "example": "Logged out successfully."
+                            "example": {
+                                "detail": "Logged out successfully."
+                            }
                         }
                     }
-                },
-            })
+                 },
+                 401: not_authenticated_doc
+             })
 def logout(current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)], db: Session = Depends(get_db)):
     delete_tokens_by_user_id(db, current_user.id)
 
     return {"detail": "Logged out successfully."}
 
 
-@router.get("/me", response_model=auth_schemas.UserRead)
+@router.get("/me",
+            response_model=auth_schemas.UserRead,
+            responses={
+                200: {
+                    "description": "Returns the name and id of the current user.",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "id": 1,
+                                "username": "johndoe",
+                            }
+                        }
+                    }
+                },
+                401: not_authenticated_doc
+            })
 def read_current_user(
         current_user: Annotated[auth_schemas.UserRead, Depends(get_current_user)],
 ):
