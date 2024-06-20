@@ -18,5 +18,10 @@ pip install -r requirements.txt
 ## Running the app
 `fastapi dev src/main.py`
 
-## Documentation
-[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+## API URL
+[https://silang-api-staging-nmw6skuooa-et.a.run.app](https://silang-api-staging-nmw6skuooa-et.a.run.app)
+
+## API Documentation
+[https://silang-api-staging-nmw6skuooa-et.a.run.app/docs](https://silang-api-staging-nmw6skuooa-et.a.run.app/docs)
+
+
