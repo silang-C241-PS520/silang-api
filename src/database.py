@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 DB_URL = os.environ.get("DB_URL")
-if not DB_URL :
+if not DB_URL:
     print("DB_URL env variable is not set.")
 
 engine = create_engine(DB_URL)
